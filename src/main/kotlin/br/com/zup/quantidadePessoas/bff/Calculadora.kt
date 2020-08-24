@@ -5,19 +5,21 @@ import org.springframework.stereotype.Service
 @Service
 class Calculadora {
 
-    fun soma1(qtPessoas: String): String{
+    fun soma1(qtPessoas: String): Result{
 
         val qtPessoasInt = qtPessoas.toInt()
-        val subtrai = qtPessoasInt
+        val soma = qtPessoasInt + 1
 
-        return subtrai.toString()
+        return Result(value = soma.toString())
     }
 
-    fun subtrai1(qtPessoas: String): String{
+    fun subtrai1(qtPessoas: String): Result {
 
         val qtPessoasInt = qtPessoas.toInt()
         val subtrai = qtPessoasInt - 1
 
-        return subtrai.toString()
+        return Result(value = subtrai.toString())
     }
 }
+
+data class Result (val value: String)

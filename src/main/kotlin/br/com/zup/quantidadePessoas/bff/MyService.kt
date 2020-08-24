@@ -15,6 +15,7 @@ import br.com.zup.beagle.widget.ui.ImagePath
 import br.com.zup.beagle.widget.ui.Text
 import br.com.zup.beagle.core.PositionType
 import br.com.zup.beagle.ext.applyFlex
+import br.com.zup.beagle.ext.unitReal
 import br.com.zup.beagle.widget.action.Alert
 import br.com.zup.beagle.widget.action.RequestActionMethod
 import br.com.zup.beagle.widget.action.SendRequest
@@ -23,8 +24,8 @@ import br.com.zup.beagle.widget.context.ContextData
 import br.com.zup.beagle.widget.navigation.Touchable
 
 data class NumeroDePessoas(
-        val qtPessoas: String = "0",
-        val totalPessoas: String = "0"
+        val qtPessoas: String,
+        val pessoas: String
 )
 
 @Service
@@ -32,7 +33,7 @@ class MyService {
     fun createScreen(): Screen =
             Screen(child = this.createWidget())
 
-    fun createWidget(): Widget = Container(context = ContextData(id = "numeroDePessoas", value = NumeroDePessoas(qtPessoas = "0", totalPessoas = "0")),
+    fun createWidget(): Widget = Container(context = ContextData(id = "numeroDePessoas", value = NumeroDePessoas(qtPessoas = "", pessoas = "")),
 
             children = listOf(
             Container(children = listOf(
@@ -41,24 +42,35 @@ class MyService {
                             path = ImagePath.Local.justMobile(mobileId = "background")).applyStyle(Style(size = Size(width = 100.unitPercent(), height = 100.unitPercent()))),
                     Container(children = listOf(
 
-                            Touchable(onPress = listOf(
-                                    SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value = "1"),
-                                    SendRequest(url = "/soma/@{numeroDePessoas.qtPessoas}", method = RequestActionMethod.GET, onSuccess =
-                                    listOf(SetContext(contextId = "numeroDePessoas", path = "totalPessoas", value = "@{onSucess.data.value}")))),
-                                    child = Container(children = listOf(Text(text = "+1")))),
+                            Container(children = listOf(
+                                    Text(text = "Pessoas: @{numeroDePessoas.qtPessoas}"),
 
-                            Touchable(onPress = listOf(SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value =  "1"),
-                                    SendRequest(url = "/subtrai/@{numeroDePessoas.qtPessoas}", method = RequestActionMethod.GET, onSuccess =
-                                    listOf(
-                                            Alert(title = null, message = "@{onSuccess.data}"),
-                                            SetContext(contextId = "numeroDePessoas", path = "totalPessoas", value = "Olá mundo")))),
-                                    child = Container(children = listOf(Text(text = "-1")))),
+                                    Container(children = listOf(
+                                            Touchable(onPress = listOf(
+                                                    SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value = "1"),
+                                                    SendRequest(url = "/soma/@{numeroDePessoas.pessoas}", method = RequestActionMethod.GET, onSuccess =
+                                                    listOf(
+                                                            Alert(title = null, message = "@{numeroDePessoas.qtPessoas}"),
+                                                            SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value = "@{onSucess.data}")
+                                                    ))),
+                                                    child = Container(children = listOf(Text(text = "+1"))).applyStyle(Style(margin = EdgeValue(all = 40.unitReal())))),
 
-                            Text("@{numeroDePessoas.totalPessoas}")
+                                            Touchable(onPress = listOf(
+                                                    SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value =  "1"),
+                                                    SendRequest(url = "/subtrai/@{numeroDePessoas.pessoas}", method = RequestActionMethod.GET, onSuccess =
+                                                    listOf(
+                                                            Alert(title = null, message = "@{numeroDePessoas.qtPessoas}"),
+                                                            SetContext(contextId = "numeroDePessoas", path = "qtPessoas", value = "@{onSucess.data}")
+                                                    ))),
+                                                    child = Container(children = listOf(Text(text = "-1"))).applyStyle(Style(margin = EdgeValue(all = 40.unitReal()))))
+                                    )).applyFlex(Flex(flexDirection = FlexDirection.ROW)),
+
+                                    Text("@{numeroDePessoas.qtPessoas}")
+                            )).applyFlex(Flex(alignContent = AlignContent.CENTER, alignItems = AlignItems.CENTER))
 
 
-                    )).applyStyle(Style(positionType = PositionType.ABSOLUTE))
-            )).applyStyle(Style(backgroundColor = "#000000")).applyFlex(flex = Flex(grow = 1.0))
+                    )).applyStyle(Style(positionType = PositionType.ABSOLUTE)).applyFlex(Flex(alignContent = AlignContent.CENTER, alignItems = AlignItems.CENTER))
+            )).applyStyle(Style(backgroundColor = "#000000")).applyFlex(flex = Flex(grow = 1.0, alignContent = AlignContent.CENTER, alignItems = AlignItems.CENTER, justifyContent = JustifyContent.CENTER))
     ))
 }
 
